@@ -5,14 +5,22 @@ puppeteer.use(
   RecaptchaPlugin({
     provider: {
       id: '2captcha',
-      token: ''
+      token: 'f953a805e6941946037516052c6557af'
     },
     visualFeedback: true
   })
 )
 
 async function scrapeGoogle(query) {
-    const browser = await puppeteer.launch({ headless: false, executablePath: '/usr/bin/google-chrome' });
+    const browser = await puppeteer.launch({ 
+      headless: true, 
+      executablePath: '/usr/bin/google-chrome', 
+      args: [
+        '--no-sandbox', '--disable-setuid-sandbox',
+        '--disable-blink-features=AutomationControlled'
+        // disable automation
+
+      ] });
     const page = await browser.newPage();
     
     // Set user agent to mimic a real browser
@@ -21,7 +29,7 @@ async function scrapeGoogle(query) {
     const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
     await page.goto(searchUrl, { timeout: 0 });
 
-    await page.solveRecaptchas()
+    // await page.solveRecaptchas()
     await page.waitForNavigation()
 
     // for (let i = 0; i < 100; i++) {
